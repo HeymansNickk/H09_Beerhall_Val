@@ -52,6 +52,7 @@ namespace Beerhall {
             app.UseRouting();
 
             app.UseAuthorization();
+            app.UseStatusCodePages();
 
             app.UseEndpoints(endpoints =>
             {

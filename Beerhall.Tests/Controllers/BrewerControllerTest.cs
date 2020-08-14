@@ -149,6 +149,14 @@ namespace Beerhall.Tests.Controllers {
             _brewerRepository.Verify(m => m.Delete(It.IsAny<Brewer>()), Times.Once());
             _brewerRepository.Verify(m => m.SaveChanges(), Times.Once());
         }
+
+        [Fact]
+        public void Delete_UnknownBrewer_ReturnsNotFound()
+        {
+            _brewerRepository.Setup(m => m.GetBy(1)).Returns((Brewer)null); 
+            IActionResult action = _controller.Delete(1); 
+            Assert.IsType<NotFoundResult>(action);
+        }
         #endregion
     }
 }

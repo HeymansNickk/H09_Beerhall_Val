@@ -1,4 +1,5 @@
-﻿using Beerhall.Models.Domain;
+﻿using System;
+using Beerhall.Models.Domain;
 using Beerhall.Models.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -23,8 +24,11 @@ namespace Beerhall.Controllers {
 
         public IActionResult Edit(int id) {
             Brewer brewer = _brewerRepository.GetBy(id);
-            ViewData["IsEdit"] = true;
-            ViewData["Locations"] = GetLocationsAsSelectList();
+            if (brewer == null)
+            {
+                return NotFound();
+            }
+            ViewData["Locations"] = GetLocationsAsSelectList(brewer.Location?.PostalCode);
             return View(new BrewerEditViewModel(brewer));
         }
 
@@ -53,19 +57,28 @@ namespace Beerhall.Controllers {
 
         [HttpPost]
         public IActionResult Create(BrewerEditViewModel brewerEditViewModel) {
-            try
+            if (ModelState.IsValid)
             {
-                Brewer brewer = new Brewer(brewerEditViewModel.Name);
-                MapBrewerEditViewModelToBrewer(brewerEditViewModel, brewer);
-                _brewerRepository.Add(brewer);
-                _brewerRepository.SaveChanges();
-                TempData["message"] = $"You successfully added brewer {brewer.Name}.";
+                try
+                {
+                    Brewer brewer = new Brewer(brewerEditViewModel.Name);
+                    MapBrewerEditViewModelToBrewer(brewerEditViewModel, brewer);
+                    _brewerRepository.Add(brewer);
+                    _brewerRepository.SaveChanges();
+                    TempData["message"] = $"You successfully added brewer {brewer.Name}.";
+                    return RedirectToAction(nameof(Index));
+                }
+                catch (Exception e)
+                {
+                    ModelState.AddModelError("", e.Message);
+                }
+                
             }
-            catch
-            {
-                TempData["error"] = "Sorry, something went wrong, the brewer was not added...";
-            }
-            return RedirectToAction(nameof(Index));
+
+            ViewData["IsEdit"] = false;
+            ViewData["Locations"] = GetLocationsAsSelectList();
+            return View(nameof(Edit), brewerEditViewModel);
+
         }
 
         public IActionResult Delete(int id) {
@@ -90,7 +103,7 @@ namespace Beerhall.Controllers {
             return RedirectToAction(nameof(Index));
         }
 
-        private SelectList GetLocationsAsSelectList() {
+        private SelectList GetLocationsAsSelectList(string postalCode) {
             return new SelectList(
                             _locationRepository.GetAll().OrderBy(l => l.Name),
                             nameof(Location.PostalCode),

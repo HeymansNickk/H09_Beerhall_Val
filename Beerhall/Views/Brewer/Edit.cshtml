@@ -14,13 +14,14 @@
 <h2>@ViewData["Title"]</h2>
 
 <form method="post">
+    <div asp-validation-summary="All"></div>
     <div class="form-group">
         <label asp-for="Name"></label>
-        <input asp-for="Name" class="form-control" />
+        <input asp-for="Name" class="form-control"/>
     </div>
     <div class="form-group">
         <label asp-for="Street"></label>
-        <input asp-for="Street" />
+        <input asp-for="Street"/>
     </div>
     <div class="form-group">
         <label asp-for="PostalCode"></label>
@@ -30,7 +31,7 @@
     </div>
     <div class="form-group">
         <label asp-for="ContactEmail"></label>
-        <input asp-for="ContactEmail" class="form-control" />
+        <input asp-for="ContactEmail" class="form-control"/>
         <span asp-validation-for="ContactEmail" class="text-danger"></span>
     </div>
     <div class="form-group">
@@ -39,11 +40,11 @@
     </div>
     <div class="form-group">
         <label asp-for="DateEstablished"></label>
-        <input asp-for="DateEstablished" class="form-control" />
+        <input asp-for="DateEstablished" class="form-control"/>
     </div>
     <div class="form-group">
         <label asp-for="Turnover"></label>
-        <input asp-for="Turnover" class="form-control" />
+        <input asp-for="Turnover" class="form-control"/>
     </div>
     <div>
         <button class="btn btn-primary" type="submit">Save</button>
